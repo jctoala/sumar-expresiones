@@ -1,182 +1,188 @@
-#include <stdio.h>
-
-#define TAM_LISTA 5
-
-struct nodo{
-	char var;
-	int base;
-	int expo;
-	int sgt;
-};
-
-struct lista{
-	int inicio;
-	int valido;
-	struct nodo item[TAM_LISTA];
-};
-
-typedef struct lista TDALISTA;
-typedef struct nodo TERMINO;
-
-int insafter(TDALISTA &l, int pos, TERMINO termino);
-int delafter(TDALISTA &l, int pos, TERMINO &termino);
-int getnode(TDALISTA &l);
-void freenode(TDALISTA &l, int salvo);
-void startlist (TDALISTA &l);
-int Buscar_Ant(TDALISTA l, TERMINO termino);
-int Despues_De(TDALISTA l, TERMINO termino);
-void Sumar_Expre(TDALISTA expre1, TDALISTA expre2, TDALISTA &expre3);
-void Mostrar(TDALISTA l);
-
-int main(){
-	TERMINO termino;
-	TDALISTA expre1, expre2, expre3;
+	#include <stdio.h>
 	
-	startlist(expre1);
-	startlist(expre2);
-	startlist(expre3);
+	#define TAM_LISTA 5
+	#define TERMINO_INDEPENDIENTE '{'
 	
-	printf("Expresion 1: z^2 + 2x\n");
-	termino.base = 1;
-	termino.var = 'z';
-	termino.expo = 2;
-	insafter(expre1, Despues_De(expre1, termino), termino);
-	termino.base = 2;
-	termino.var = 'x';
-	termino.expo = 1;
-	insafter(expre1, Despues_De(expre1, termino), termino);
+	struct nodo{
+		char var;
+		int base;
+		int expo;
+		int sgt;
+	};
 	
-	printf("Expresion 2: 2x^2 + x\n");
-	termino.base = 2;
-	termino.var = 'x';
-	termino.expo = 2;
-	insafter(expre2, Despues_De(expre2, termino), termino);
-	termino.base = 1;
-	termino.var = 'x';
-	termino.expo = 1;
-	insafter(expre2, Despues_De(expre2, termino), termino);
+	struct lista{
+		int inicio;
+		int valido;
+		struct nodo item[TAM_LISTA];
+	};
 	
-	printf("\n\nSumando las 2 expresiones\n");
-	Sumar_Expre(expre1, expre2, expre3);
+	typedef struct lista TDALISTA;
+	typedef struct nodo TERMINO;
 	
-	printf("\tExpresiones sumadas...\n");
+	int insafter(TDALISTA &l, int pos, TERMINO termino);
+	int delafter(TDALISTA &l, int pos, TERMINO &termino);
+	int getnode(TDALISTA &l);
+	void freenode(TDALISTA &l, int salvo);
+	void startlist (TDALISTA &l);
+	int Buscar_Ant(TDALISTA l, TERMINO termino);
+	int Despues_De(TDALISTA l, TERMINO termino);
+	void Sumar_Expre(TDALISTA expre1, TDALISTA expre2, TDALISTA &expre3);
+	void Mostrar(TDALISTA l);
 	
-	printf("\nMostrando la expresion 1: ");
-	Mostrar(expre1);
-	printf("\nMostrando la expresion 2: ");
-	Mostrar(expre2);
-	printf("\nMostrando la expresion 3: ");
-	Mostrar(expre3);
+	int main(){
+		TERMINO termino;
+		TDALISTA expre1, expre2, expre3;
+		
+		startlist(expre1);
+		startlist(expre2);
+		startlist(expre3);
+		
+		printf("Expresion 1: z^2 + 2x + 2\n");
+		termino.base = 1;
+		termino.var = 'z';
+		termino.expo = 2;
+		insafter(expre1, Despues_De(expre1, termino), termino);
+		termino.base = 2;
+		termino.var = 'x';
+		termino.expo = 1;
+		insafter(expre1, Despues_De(expre1, termino), termino);
+		termino.base = 2;
+		termino.var = TERMINO_INDEPENDIENTE;
+		termino.expo = 1;
+		insafter(expre1, Despues_De(expre1, termino), termino);
+		
+		printf("Expresion 2: 2x^2 + x\n");
+		termino.base = 2;
+		termino.var = 'x';
+		termino.expo = 2;
+		insafter(expre2, Despues_De(expre2, termino), termino);
+		termino.base = 1;
+		termino.var = 'x';
+		termino.expo = 1;
+		insafter(expre2, Despues_De(expre2, termino), termino);
+		
+		printf("\n\nSumando las 2 expresiones\n");
+		Sumar_Expre(expre1, expre2, expre3);
+		
+		printf("\tExpresiones sumadas...\n");
+		
+		printf("\nMostrando la expresion 1: ");
+		Mostrar(expre1);
+		printf("\nMostrando la expresion 2: ");
+		Mostrar(expre2);
+		printf("\nMostrando la expresion 3: ");
+		Mostrar(expre3);
+		
+		return 0;
+	}
 	
-	return 0;
-}
-
-int insafter(TDALISTA &l, int pos, TERMINO termino){
-	int q;
-	if(pos >= 0 && pos <= TAM_LISTA-1){
-		q = getnode(l);
-		if(q != -1){
-			l.item[q].var = termino.var;
-			l.item[q].base = termino.base;
-			l.item[q].expo = termino.expo;
-			l.item[q].sgt = l.item[pos].sgt;
-			l.item[pos].sgt = q;
+	int insafter(TDALISTA &l, int pos, TERMINO termino){
+		int q;
+		if(pos >= 0 && pos <= TAM_LISTA-1){
+			q = getnode(l);
+			if(q != -1){
+				l.item[q].var = termino.var;
+				l.item[q].base = termino.base;
+				l.item[q].expo = termino.expo;
+				l.item[q].sgt = l.item[pos].sgt;
+				l.item[pos].sgt = q;
+				
+				return 1;
+			}
+		}
+		return 0;
+	}
+	
+	int delafter(TDALISTA &l, int pos, TERMINO &termino){
+		int salvo;
+		if(pos >= 0 && pos <= TAM_LISTA-1){
+			if(l.item[pos].sgt != -1){
+				salvo = l.item[pos].sgt;
+				l.item[pos].sgt = l.item[salvo].sgt;
+				termino.var = l.item[salvo].var;
+				termino.expo = l.item[salvo].expo;
+				termino.base = l.item[salvo].base;
+				freenode(l, salvo);
+				
+				return 1;
+			}
+		}
+		return 0;
+	}
+	
+	int getnode(TDALISTA &l){
+		int q;
+		if(l.valido != -1){
+			q = l.valido;
+			l.valido = l.item[q].sgt;
 			
-			return 1;
+			return q;
 		}
+		return -1;
 	}
-	return 0;
-}
-
-int delafter(TDALISTA &l, int pos, TERMINO &termino){
-	int salvo;
-	if(pos >= 0 && pos <= TAM_LISTA-1){
-		if(l.item[pos].sgt != -1){
-			salvo = l.item[pos].sgt;
-			l.item[pos].sgt = l.item[salvo].sgt;
-			termino.var = l.item[salvo].var;
-			termino.expo = l.item[salvo].expo;
-			termino.base = l.item[salvo].base;
-			freenode(l, salvo);
+	
+	void freenode(TDALISTA &l, int salvo){
+		l.item[salvo].sgt = l.valido;
+		l.valido = salvo;
+	}
+	
+	void startlist (TDALISTA &l){
+		for (int i = 0; i< TAM_LISTA-1; i++)
+			l.item[i].sgt = i+1;
+		l.item[TAM_LISTA-1].sgt = -1;
+		l.inicio = 0;
+		l.valido = l.item[l.inicio].sgt;
+		l.item[l.inicio].sgt = -1;
+	}
+	
+	int Buscar_Ant(TDALISTA l, TERMINO termino){
+		for(int i = l.inicio; l.item[i].sgt != -1; i = l.item[i].sgt){
+			if(l.item[l.item[i].sgt].var == termino.var)
+				if(l.item[l.item[i].sgt].expo == termino.expo)
+					return i;
+		}
+		return -1;
+	}
+	
+	int Despues_De(TDALISTA l, TERMINO termino){
+		int i = l.inicio;
+		for(i = l.inicio; l.item[i].sgt != -1; i = l.item[i].sgt){
+			if(l.item[l.item[i].sgt].var >= termino.var)
+				if(l.item[l.item[i].sgt].expo >= termino.expo)
+					return i;
+		}
+		return i;
+	}
+	
+	void Sumar_Expre(TDALISTA expre1, TDALISTA expre2, TDALISTA &expre3){
+		TERMINO termino1, termino2;
+		
+		while(delafter(expre1, 0, termino1)){
 			
-			return 1;
+			if( delafter(expre2, Buscar_Ant(expre2, termino1), termino2) )
+				termino1.base += termino2.base;
+			insafter(expre3, Despues_De(expre3, termino1), termino1);
+			
 		}
-	}
-	return 0;
-}
-
-int getnode(TDALISTA &l){
-	int q;
-	if(l.valido != -1){
-		q = l.valido;
-		l.valido = l.item[q].sgt;
 		
-		return q;
-	}
-	return -1;
-}
-
-void freenode(TDALISTA &l, int salvo){
-	l.item[salvo].sgt = l.valido;
-	l.valido = salvo;
-}
-
-void startlist (TDALISTA &l){
-	for (int i = 0; i< TAM_LISTA-1; i++)
-		l.item[i].sgt = i+1;
-	l.item[TAM_LISTA-1].sgt = -1;
-	l.inicio = 0;
-	l.valido = l.item[l.inicio].sgt;
-	l.item[l.inicio].sgt = -1;
-}
-
-int Buscar_Ant(TDALISTA l, TERMINO termino){
-	for(int i = l.inicio; l.item[i].sgt != -1; i = l.item[i].sgt){
-		if(l.item[l.item[i].sgt].var == termino.var)
-			if(l.item[l.item[i].sgt].expo == termino.expo)
-				return i;
-	}
-	return -1;
-}
-
-int Despues_De(TDALISTA l, TERMINO termino){
-	int i = l.inicio;
-	for(i = l.inicio; l.item[i].sgt != -1; i = l.item[i].sgt){
-		if(l.item[l.item[i].sgt].var >= termino.var)
-			if(l.item[l.item[i].sgt].expo >= termino.expo)
-				return i;
-	}
-	return i;
-}
-
-void Sumar_Expre(TDALISTA expre1, TDALISTA expre2, TDALISTA &expre3){
-	TERMINO termino1, termino2;
-	
-	while(delafter(expre1, 0, termino1)){
-		
-		if( delafter(expre2, Buscar_Ant(expre2, termino1), termino2) )
-			termino1.base += termino2.base;
-		insafter(expre3, Despues_De(expre3, termino1), termino1);
+		while (delafter(expre2, 0, termino2))
+			insafter(expre3, Despues_De(expre3, termino2), termino2);
 		
 	}
 	
-	while (delafter(expre2, 0, termino2))
-		insafter(expre3, Despues_De(expre3, termino2), termino2);
-	
-}
-
-void Mostrar(TDALISTA l){	
-	TERMINO termino;
-	
-	while(delafter(l, 0, termino)){
-		if(termino.base != 1)
-			printf("%d", termino.base);
-		if(termino.expo != 0){
-			printf("%c", termino.var);
-			printf("^%d", termino.expo);
+	void Mostrar(TDALISTA l){	
+		TERMINO termino;
+		
+		while(delafter(l, 0, termino)){
+			if(termino.base != 1)
+				printf("%d", termino.base);
+			if(termino.expo != 0){
+				if(termino.var != TERMINO_INDEPENDIENTE)
+					printf("%c", termino.var);
+				printf("^%d", termino.expo);
+			}
+			printf(" + ");
+			
 		}
-		printf(" + ");
 		
 	}
-	
-}
